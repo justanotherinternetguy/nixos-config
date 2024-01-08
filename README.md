@@ -1,1 +1,3 @@
 # nixos-config
+
+* home-manager
