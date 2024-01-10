@@ -4,6 +4,7 @@
 
 { config, pkgs, ... }:
 
+
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -126,18 +127,18 @@
       enableAutosuggestions = true;
       enableCompletion = true;
       initExtraBeforeCompInit = ''
-	eval "$(starship init zsh)"
+        eval "$(starship init zsh)"
       '';
       initExtra = ''
       sudo cpupower frequency-set -g "powersave"
       '';
       oh-my-zsh = {
         enable = true;
-	plugins = [
-	  "git"
-	  "sudo"
-	  "z"
-	];
+        plugins = [
+          "git"
+          "sudo"
+          "z"
+        ];
       };
 
       zplug = {
@@ -153,13 +154,19 @@
         l = "exa -l";
         la = "exa -la";
         ip = "ip --color=auto";
-	econf = "sudo nvim /etc/nixos/configuration.nix";
+        econf = "sudo nvim /etc/nixos/configuration.nix";
+        doom = "~/.config/emacs/bin/doom";
       };
 
     };
 
+    programs.neovim = {
+      enable = true;
+    };
+
     home.stateVersion = "23.11"; # Did you read the comment?
   };
+
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -168,7 +175,13 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    vscodium
+    emacs
+    gcc13
+    lunarvim
+    unzip
     wget
+    rustup
     xclip
     linuxKernel.packages.linux_6_1.cpupower
     hyfetch
@@ -179,7 +192,6 @@
     qt6Packages.qtstyleplugin-kvantum
     themechanger
     alacritty
-    alacritty-theme
     corectrl
     python3
     starship
