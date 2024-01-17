@@ -64,7 +64,7 @@
 #  services.xserver.displayManager.defaultSession = pkgs.lib.mkForce "gnome";
   programs.ssh.askPassword = pkgs.lib.mkForce "/nix/store/barkcvy2wy7lx6hcfybx7s1llkdwjl8v-seahorse-43.0/libexec/seahorse/ssh-askpass";
   programs.dconf.enable = true;
-  
+
 
   # nvidia config
   hardware.nvidia = {
@@ -82,6 +82,13 @@
     layout = "us";
     xkbVariant = "";
   };
+
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
+
+  virtualisation.virtualbox.host.enable = true;
+  users.extraGroups.vboxusers.members = [ "user-with-access-to-virtualbox" ];
+
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -110,7 +117,7 @@
   users.users.alien = {
     isNormalUser = true;
     description = "alien";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
     packages = with pkgs; [
       kate
     #  thunderbird
@@ -127,18 +134,19 @@
       enableAutosuggestions = true;
       enableCompletion = true;
       initExtraBeforeCompInit = ''
-        eval "$(starship init zsh)"
+	eval "$(starship init zsh)"
       '';
       initExtra = ''
       sudo cpupower frequency-set -g "powersave"
+      source ~/Programming/mainenv/bin/activate
       '';
       oh-my-zsh = {
         enable = true;
-        plugins = [
-          "git"
-          "sudo"
-          "z"
-        ];
+	plugins = [
+	  "git"
+	  "sudo"
+	  "z"
+	];
       };
 
       zplug = {
@@ -154,8 +162,8 @@
         l = "exa -l";
         la = "exa -la";
         ip = "ip --color=auto";
-        econf = "sudo nvim /etc/nixos/configuration.nix";
-        doom = "~/.config/emacs/bin/doom";
+	econf = "sudo nvim /etc/nixos/configuration.nix";
+#	doom = "~/.config/emacs/bin/doom";
       };
 
     };
@@ -167,17 +175,27 @@
     home.stateVersion = "23.11"; # Did you read the comment?
   };
 
+  services.emacs = {
+    enable = true;
+  };
+
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+  hardware.opentabletdriver.enable = true;
+  hardware.opentabletdriver.daemon.enable = true;
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     vscodium
     emacs
     gcc13
+    tmux
+    ncdu
+    gcc-unwrapped
+    file
     lunarvim
     unzip
     wget
@@ -185,6 +203,7 @@
     xclip
     linuxKernel.packages.linux_6_1.cpupower
     hyfetch
+    jdk17
     nodejs_21
     libsForQt5.qtstyleplugin-kvantum
     catppuccin-kvantum
@@ -201,6 +220,8 @@
     gnome.adwaita-icon-theme
     eza
     btop
+    zlib
+    nvtop
     flameshot
     htop
     fd
